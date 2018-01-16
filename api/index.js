@@ -52,7 +52,7 @@ const schema = makeExecutableSchema({
 });
 
 const helperMiddleware = [
-	cors({ origin: 'http://localhost:8080' }),
+	cors({ origin: 'http://195.62.70.104:8080' }),
 	bodyParser.json(),
 	bodyParser.text({ type: 'application/graphql' }),
 	(req, res, next) => {
