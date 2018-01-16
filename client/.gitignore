@@ -1,0 +1,9 @@
+node_modules/
+thema/
+.idea/
+.DS_Store
+npm-debug.log
+yarn-error.log
+dist/
+build/
+Users/
