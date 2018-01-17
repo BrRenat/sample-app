@@ -2,14 +2,14 @@ const { createUser, users, user } = require('./resolvers/user');
 
 const typeDefs = `
 	type User { 
-		id: ID! 
+		_id: String 
 		name: String 
 		email: String 
 	}
 	
 	type Query { 
 		users: [User]
-		user(id: ID): User
+		user(_id: String): User
 	}
 	
 	type Mutation {

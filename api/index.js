@@ -1,7 +1,7 @@
 require('babel-core/register');
 require('babel-polyfill');
 
-const { initdb } = require('./src/db');
+const initMongoDB = require('./src/db');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -23,7 +23,8 @@ const helperMiddleware = [
 
 (async () => {
 	try {
-		global.db = await initdb();
+		console.log(initMongoDB)
+		global.MongoDB = await initMongoDB();
 
 		const schema = makeExecutableSchema(require('./src/schema'));
 

@@ -1,16 +1,16 @@
-const Users = db.collection('isina.users');
+const Users = MongoDB.collection('isina.users');
 
 const users = async () => {
 	return await Users.find().toArray();
 };
 
-const user = async (root, { id }) => {
-	return await Users.findOne(ObjectId(id));
+const user = async (root, { _id }) => {
+	return await Users.findOne(ObjectId(_id));
 };
 
 const createUser = async (root, args, context, info) => {
 	const res = await Users.insert(args);
-	return await Users.findOne({ id: res.insertedIds[1] });
+	return true;
 };
 
 module.exports = {
