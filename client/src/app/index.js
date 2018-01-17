@@ -1,32 +1,37 @@
-import React, { PropTypes } from 'react';
-import { Provider } from 'react-redux';
-import { HashRouter, Switch, Route } from 'react-router-dom';
+import React from 'react';
+import { Router, Switch, Route, BrowserRouter } from 'react-router-dom';
 
 import asyncRoute from './asyncRoute';
 
 import { AppContainer, AppContent } from './styles';
 
 const MainScreen = asyncRoute(() => import(
-  /* webpackChunkName: "MainScreen" */
-  'containers/MainScreen'
+	/* webpackChunkName: "MainScreen" */
+	'containers/MainScreen'
 ));
 
-const App = ({ store }) => (
-  <Provider store={store}>
-    <HashRouter>
-      <AppContainer>
-        <AppContent>
-          <Switch>
-            <Route exact path="/" component={MainScreen} />
-          </Switch>
-        </AppContent>
-      </AppContainer>
-    </HashRouter>
-  </Provider>
-);
+const CreateUser = asyncRoute(() => import(
+	/* webpackChunkName: "CreateUser" */
+	'containers/CreateUser'
+));
 
-App.propTypes = {
-	store: PropTypes.object
-};
+const EditUser = asyncRoute(() => import(
+	/* webpackChunkName: "EditUser" */
+	'containers/EditUser'
+));
+
+const App = () => (
+	<BrowserRouter>
+		<AppContainer>
+			<AppContent>
+				<Switch>
+					<Route exact path="/new" component={CreateUser} />
+					<Route exact path="/:userId" component={EditUser} />
+					<Route exact path="/" component={MainScreen} />
+				</Switch>
+			</AppContent>
+		</AppContainer>
+	</BrowserRouter>
+);
 
 export default App;

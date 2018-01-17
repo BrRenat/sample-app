@@ -1,4 +1,4 @@
-const { createUser, users, user } = require('./resolvers/user');
+const { createUser, editUser, deleteUser, users, user } = require('./resolvers/user');
 
 const typeDefs = `
 	type User { 
@@ -14,6 +14,8 @@ const typeDefs = `
 	
 	type Mutation {
 		createUser(name: String, email: String): User
+		editUser(_id: String, name: String, email: String): User
+		deleteUser(_id: String): User
 	}
 	
 	schema {
@@ -28,7 +30,9 @@ const resolvers = {
 		user
 	},
 	Mutation: {
-		createUser
+		createUser,
+		editUser,
+		deleteUser
 	}
 };
 

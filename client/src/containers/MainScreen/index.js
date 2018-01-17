@@ -1,67 +1,58 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
 import { withApollo, graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import compose from 'lodash.compose';
 
-import { testAction } from 'redux/test/actions';
-import { testActionResultSelector } from 'redux/test/selectors';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import { CircularProgress } from 'material-ui/Progress';
 
-import { MainContainer } from './styles';
+import {
+	usersListQuery
+} from 'query';
 
-const mapDispatchToProps = {
-	testAction
-};
-
-const mapStateToProps = createStructuredSelector({
-	testActionResult: testActionResultSelector
-});
-
-const usersListQuery = gql`
-	query UserList {
-		users {
-			name
-			email
-		}
-	}
-`;
-
-const addUserQuery = gql`
-	mutation CreateUserMutation($name: String!) {
-		createUser(name: $name) {
-			id
-			name
-			email
-		}
-	}
-`;
 
 class MainScreen extends Component {
-
-	createUser = () => {
-		const { client } = this.props;
-		client.mutate({
-			mutation: addUserQuery,
-			variables: { name: "new user", email: "test" },
-		});
-	};
-
 	render() {
-		const { data } = this.props;
+		const { data, loading } = this.props;
+
+		if (data.loading) {
+			return (
+				<Paper>
+					<CircularProgress />
+				</Paper>
+			);
+		}
 
 		return (
-			<MainContainer>
-				Main page
-				{data.users &&
-					<ul>
-						{data.users.map(({ name, id }) =>
-							<li key={id}>{name}</li>
-						)}
-					</ul>
-				}
-				<button onClick={this.createUser}>Create user</button>
-			</MainContainer>
+			<Paper>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Name</TableCell>
+							<TableCell>Email</TableCell>
+							<TableCell />
+						</TableRow>
+					</TableHead>
+					{data.users &&
+						<TableBody>
+							{data.users.map(({ name, _id, email }) =>
+								<TableRow
+									key={_id}
+								>
+									<TableCell>{name}</TableCell>
+									<TableCell>{email}</TableCell>
+									<TableCell><a href={_id}>Edit</a></TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					}
+				</Table>
+
+				<Button component="a" href="new">
+					Add User
+				</Button>
+			</Paper>
 		);
 	}
 }
@@ -72,10 +63,8 @@ MainScreen.propTypes = {
 };
 
 export default compose(
-	connect(mapStateToProps, mapDispatchToProps),
 	withApollo,
 	graphql(
 		usersListQuery,
-		addUserQuery,
 	),
 )(MainScreen);
