@@ -12,17 +12,18 @@ const MONGO_URL = 'mongodb://195.62.70.104:27017/admin';
 
 const typeDefs = `
 	type User { 
-		id: String 
+		id: ID! 
 		name: String 
 		email: String 
 	}
 	
 	type Query { 
 		users: [User]
+		user(id: ID): User
 	}
 	
 	type Mutation {
-		createUser(id: String, name: String, email: String): User
+		createUser(name: String, email: String): User
 	}
 	
 	schema {
@@ -53,27 +54,16 @@ const helperMiddleware = [
 			Query: {
 				users: async () => {
 					return await Users.find().toArray();
+				},
+				user: async (root, { id }) => {
+					return await Users.findOne(ObjectId(id));
 				}
 			},
-			// Post: {
-			// 	users: async ({_id}) => {
-			// 		return (await Comments.find({postId: _id}).toArray()).map(prepare)
-			// 	}
-			// },
-			// Comment: {
-			// 	post: async ({postId}) => {
-			// 		return prepare(await Posts.findOne(ObjectId(postId)))
-			// 	}
-			// },
 			Mutation: {
 				createUser: async (root, args, context, info) => {
 					const res = await Users.insert(args);
-					return await Users.findOne({_id: res.insertedIds[1]});
+					return await Users.findOne({ id: res.insertedIds[1] });
 				}
-				// createComment: async (root, args) => {
-				// 	const res = await Comments.insert(args)
-				// 	return prepare(await Comments.findOne({_id: res.insertedIds[1]}))
-				// },
 			}
 		};
 

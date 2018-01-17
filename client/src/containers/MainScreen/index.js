@@ -18,16 +18,34 @@ const mapStateToProps = createStructuredSelector({
 	testActionResult: testActionResultSelector
 });
 
+const usersListQuery = gql`
+	query UserList {
+		users {
+			name
+			email
+		}
+	}
+`;
+
+const addUserQuery = gql`
+	mutation CreateUserMutation($name: String!) {
+		createUser(name: $name) {
+			id
+			name
+			email
+		}
+	}
+`;
+
 class MainScreen extends Component {
 
 	createUser = () => {
-		this.props.client.mutate(
-			{
-				mutation: 'createUser',
-				variables: { name: "new user", email: "test" },
-			}
-		)
-	}
+		const { client } = this.props;
+		client.mutate({
+			mutation: addUserQuery,
+			variables: { name: "new user", email: "test" },
+		});
+	};
 
 	render() {
 		const { data } = this.props;
@@ -56,21 +74,8 @@ MainScreen.propTypes = {
 export default compose(
 	connect(mapStateToProps, mapDispatchToProps),
 	withApollo,
-	graphql(gql`
-		query UserList {
-			users {
-				name
-				email
-			}
-		}
-	`),
-	graphql(gql`
-		mutation CreateUserMutation($name: String!) {
-		  createUser(name: $name) {
-		  	id
-		  	name
-		  	email
-		  }
-		}
-	`),
+	graphql(
+		usersListQuery,
+		addUserQuery,
+	),
 )(MainScreen);
