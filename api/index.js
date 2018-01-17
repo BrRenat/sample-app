@@ -6,50 +6,30 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { graphqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
-// import { MongoClient } from 'mongodb';
+const { MongoClient } = require('mongodb');
 
-// const MONGO_URL = 'mongodb://localhost:27017/blog';
+const MONGO_URL = 'mongodb://195.62.70.104:27017/admin';
 
 const typeDefs = `
-	type User { id: String, name: String, email: String }
-	type Query { users: [User] }
-`;
-
-const resolvers = {
-	Query: {
-		users: async () => {
-			return ([
-				{ id: 1, name: 'User 1', email: 'test1@user.com' },
-				{ id: 2, name: 'User 2', email: 'test2@user.com' }
-			]);
-		}
+	type User { 
+		id: String 
+		name: String 
+		email: String 
 	}
-	// Post: {
-	// 	comments: async ({_id}) => {
-	// 		return (await Comments.find({postId: _id}).toArray()).map(prepare)
-	// 	}
-	// },
-	// Comment: {
-	// 	post: async ({postId}) => {
-	// 		return prepare(await Posts.findOne(ObjectId(postId)))
-	// 	}
-	// },
-	// Mutation: {
-	// 	createPost: async (root, args, context, info) => {
-	// 		const res = await Posts.insert(args)
-	// 		return prepare(await Posts.findOne({_id: res.insertedIds[1]}))
-	// 	},
-	// 	createComment: async (root, args) => {
-	// 		const res = await Comments.insert(args)
-	// 		return prepare(await Comments.findOne({_id: res.insertedIds[1]}))
-	// 	},
-	// },
-};
-
-const schema = makeExecutableSchema({
-	typeDefs,
-	resolvers
-});
+	
+	type Query { 
+		users: [User]
+	}
+	
+	type Mutation {
+		createUser(id: String, name: String, email: String): User
+	}
+	
+	schema {
+		query: Query
+		mutation: Mutation
+	}
+`;
 
 const helperMiddleware = [
 	cors({ origin: 'http://195.62.70.104:8080' }),
@@ -65,8 +45,43 @@ const helperMiddleware = [
 
 (async () => {
 	try {
-		// const db = await MongoClient.connect(MONGO_URL)
-		// const Users = db.collection('users')
+		const db = await MongoClient.connect(MONGO_URL);
+		await db.authenticate('admin', 'Hg98t3Nsj');
+		const Users = db.collection('isina.users');
+
+		const resolvers = {
+			Query: {
+				users: async () => {
+					return await Users.find().toArray();
+				}
+			},
+			// Post: {
+			// 	users: async ({_id}) => {
+			// 		return (await Comments.find({postId: _id}).toArray()).map(prepare)
+			// 	}
+			// },
+			// Comment: {
+			// 	post: async ({postId}) => {
+			// 		return prepare(await Posts.findOne(ObjectId(postId)))
+			// 	}
+			// },
+			Mutation: {
+				createUser: async (root, args, context, info) => {
+					const res = await Users.insert(args);
+					return await Users.findOne({_id: res.insertedIds[1]});
+				}
+				// createComment: async (root, args) => {
+				// 	const res = await Comments.insert(args)
+				// 	return prepare(await Comments.findOne({_id: res.insertedIds[1]}))
+				// },
+			}
+		};
+
+		const schema = makeExecutableSchema({
+			typeDefs,
+			resolvers
+		});
+
 		express()
 			.use('/api', ...helperMiddleware, graphqlExpress({ schema }))
 			.listen(process.env.PORT || 3000, () => {

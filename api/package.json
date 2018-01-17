@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node addUser.js"
   },
   "author": "Renat Berezovsky <renat0014@gmail.com>",
   "devDependencies": {
