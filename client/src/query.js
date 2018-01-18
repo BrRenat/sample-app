@@ -39,3 +39,11 @@ export const editUserQuery = gql`
 		}
 	}
 `;
+
+export const removeUserQuery = gql`
+	mutation DeleteUserMutation($_id: Array!) {
+		editUser(_id: $_id) {
+			_id
+		}
+	}
+`;

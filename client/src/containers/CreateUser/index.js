@@ -18,13 +18,15 @@ class CreateUser extends React.Component {
 	};
 
 	createUser = () => {
-		const { client } = this.props;
+		const { client, history } = this.props;
 		const { name, email } = this.state;
 
 		client.mutate({
 			mutation: addUserQuery,
 			variables: { name, email }
-		});
+		})
+			.then(() => history.goBack())
+			.catch((e) => console.error(e));
 	};
 
 	editFieldStore = (e) => {

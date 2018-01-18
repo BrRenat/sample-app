@@ -160,6 +160,7 @@ module.exports = options => ({
       components: path.resolve(process.cwd(), 'src/components/'),
       containers: path.resolve(process.cwd(), 'src/containers/'),
       query: path.resolve(process.cwd(), 'src/query.js'),
+      utils: path.resolve(process.cwd(), 'src/utils/'),
     },
   },
   devtool: options.devtool,

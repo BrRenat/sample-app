@@ -9,7 +9,7 @@ import client from './client';
 const throwError = ({ error }) => { throw error; };
 
 render(
-	<ApolloProvider  client={client}>
+	<ApolloProvider client={client}>
 		<AppContainer errorReporter={throwError}>
 			<App />
 		</AppContainer>
@@ -23,7 +23,7 @@ if (module.hot) {
 			const UpdatedRoot = RootModule.default;
 
 			render(
-				<ApolloProvider  client={client}>
+				<ApolloProvider client={client}>
 					<AppContainer errorReporter={throwError}>
 						<UpdatedRoot />
 					</AppContainer>

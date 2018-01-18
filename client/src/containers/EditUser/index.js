@@ -13,7 +13,6 @@ import {
 	editUserQuery
 } from 'query';
 
-
 import { Container, SubmitWrapper, Load } from './styles';
 
 class EditUser extends React.Component {
@@ -23,7 +22,7 @@ class EditUser extends React.Component {
 	};
 
 	editUser = () => {
-		const { client, match } = this.props;
+		const { client, match, history } = this.props;
 		const { name, email } = this.state;
 
 		client.mutate({
@@ -33,7 +32,9 @@ class EditUser extends React.Component {
 				name,
 				email
 			}
-		});
+		})
+			.then(() => history.goBack())
+			.catch((e) => console.error(e))
 	};
 
 	editFieldStore = (e) => {

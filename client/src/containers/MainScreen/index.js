@@ -1,11 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import { withApollo, graphql } from 'react-apollo';
 import compose from 'lodash.compose';
+import { Link } from 'react-router-dom';
 
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import { CircularProgress } from 'material-ui/Progress';
+import Checkbox from 'material-ui/Checkbox';
 
 import {
 	usersListQuery
@@ -13,8 +15,30 @@ import {
 
 
 class MainScreen extends Component {
+	state = {
+		checked: [],
+	};
+
+	toggleCheckedElement = (e) => {
+		const { checked } = this.state;
+		const { value } = e.target;
+
+		e.persist();
+
+		this.setState(({ checked }) => ({
+			checked: checked.includes(value)
+				? checked.filter(elm => elm !== value)
+				: [...checked, value]
+		}));
+	};
+
+	removeUsers = () => {
+
+	};
+
 	render() {
 		const { data, loading } = this.props;
+		const { checked } = this.state;
 
 		if (data.loading) {
 			return (
@@ -32,6 +56,7 @@ class MainScreen extends Component {
 							<TableCell>Name</TableCell>
 							<TableCell>Email</TableCell>
 							<TableCell />
+							<TableCell />
 						</TableRow>
 					</TableHead>
 					{data.users &&
@@ -42,15 +67,31 @@ class MainScreen extends Component {
 								>
 									<TableCell>{name}</TableCell>
 									<TableCell>{email}</TableCell>
-									<TableCell><a href={_id}>Edit</a></TableCell>
+									<TableCell><Link to={`/${_id}`}>Edit</Link></TableCell>
+									<TableCell>
+										<Checkbox
+											onClick={this.toggleCheckedElement}
+											value={_id}
+											checked={this.state.checked.includes(_id)}
+											tabIndex={-1}
+											disableRipple
+										/>
+									</TableCell>
 								</TableRow>
 							)}
 						</TableBody>
 					}
 				</Table>
 
-				<Button component="a" href="new">
+				<Button component={Link} to="/new">
 					Add User
+				</Button>
+
+				<Button
+					onClick={this.removeUsers}
+					disabled={checked.length === 0}
+				>
+					Remove
 				</Button>
 			</Paper>
 		);

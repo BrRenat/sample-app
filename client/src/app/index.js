@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route, HashRouter } from 'react-router-dom';
 
 import asyncRoute from './asyncRoute';
 
@@ -21,7 +21,7 @@ const EditUser = asyncRoute(() => import(
 ));
 
 const App = () => (
-	<BrowserRouter>
+	<HashRouter>
 		<AppContainer>
 			<AppContent>
 				<Switch>
@@ -31,7 +31,7 @@ const App = () => (
 				</Switch>
 			</AppContent>
 		</AppContainer>
-	</BrowserRouter>
+	</HashRouter>
 );
 
 export default App;
