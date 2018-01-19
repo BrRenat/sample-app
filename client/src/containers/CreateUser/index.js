@@ -8,7 +8,8 @@ import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
 
 import {
-	addUserQuery
+	addUserQuery,
+  usersListQuery
 } from 'query';
 
 class CreateUser extends React.Component {
@@ -23,6 +24,7 @@ class CreateUser extends React.Component {
 
 		client.mutate({
 			mutation: addUserQuery,
+			refetchQueries: [ { query: usersListQuery }],
 			variables: { name, email }
 		})
 			.then(() => history.goBack())

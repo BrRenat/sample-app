@@ -10,7 +10,8 @@ import SaveIcon from 'material-ui-icons/Save';
 
 import {
 	userQuery,
-	editUserQuery
+	editUserQuery,
+  usersListQuery
 } from 'query';
 
 import { Container, SubmitWrapper, Load } from './styles';
@@ -18,7 +19,8 @@ import { Container, SubmitWrapper, Load } from './styles';
 class EditUser extends React.Component {
 	state = {
 		name: '',
-		email: ''
+		email: '',
+		errors: null,
 	};
 
 	editUser = () => {
@@ -27,6 +29,7 @@ class EditUser extends React.Component {
 
 		client.mutate({
 			mutation: editUserQuery,
+			refetchQueries: [ { query: usersListQuery }],
 			variables: {
 				_id: match.params.userId,
 				name,
@@ -34,7 +37,11 @@ class EditUser extends React.Component {
 			}
 		})
 			.then(() => history.goBack())
-			.catch((e) => console.error(e))
+			.catch((e) => {
+				this.setState(() => ({
+					errors: e,
+				}))
+			})
 	};
 
 	editFieldStore = (e) => {
@@ -47,6 +54,7 @@ class EditUser extends React.Component {
 
 	render() {
 		const { data } = this.props;
+		const { errors } = this.state;
 
 		if (!data || !data.user) return null;
 
@@ -77,6 +85,7 @@ class EditUser extends React.Component {
 					</Button>
 					{data.loading && <Load size={56}/>}
 				</SubmitWrapper>
+				{/*<div>{errors}</div>*/}
 			</Container>
 		);
 	}

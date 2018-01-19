@@ -10,7 +10,8 @@ import { CircularProgress } from 'material-ui/Progress';
 import Checkbox from 'material-ui/Checkbox';
 
 import {
-	usersListQuery
+	usersListQuery,
+	removeUserArrayQuery
 } from 'query';
 
 
@@ -33,7 +34,18 @@ class MainScreen extends Component {
 	};
 
 	removeUsers = () => {
+		const { client } = this.props;
+		const { checked } = this.state;
 
+		client.mutate({
+			mutation: removeUserArrayQuery,
+			//refetchQueries: [ { query: usersListQuery }],
+			variables: {
+				_id: checked
+			}
+		})
+			.then(() => console.log('user deleted'))
+			.catch((e) => console.error(e))
 	};
 
 	render() {
@@ -72,7 +84,7 @@ class MainScreen extends Component {
 										<Checkbox
 											onClick={this.toggleCheckedElement}
 											value={_id}
-											checked={this.state.checked.includes(_id)}
+											checked={checked.includes(_id)}
 											tabIndex={-1}
 											disableRipple
 										/>

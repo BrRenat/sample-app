@@ -23,7 +23,6 @@ const helperMiddleware = [
 
 (async () => {
 	try {
-		console.log(initMongoDB)
 		global.MongoDB = await initMongoDB();
 
 		const schema = makeExecutableSchema(require('./src/schema'));
