@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'
 import { reducer as formReducer } from 'redux-form'
 
-import testReducer from 'redux/test/reducer'
+import apiErrorReducer from 'redux/apiError/reducer'
+import networkErrorReducer from 'redux/networkError/reducer'
 
 const rootReducer = combineReducers({
-  form: formReducer,
-  test: testReducer,
-})
+	form: formReducer,
+	apiError: apiErrorReducer,
+	network: networkErrorReducer,
+});
 
 export default rootReducer

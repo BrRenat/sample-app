@@ -21,7 +21,6 @@ class MainScreen extends Component {
 	};
 
 	toggleCheckedElement = (e) => {
-		const { checked } = this.state;
 		const { value } = e.target;
 
 		e.persist();
@@ -39,17 +38,17 @@ class MainScreen extends Component {
 
 		client.mutate({
 			mutation: removeUserArrayQuery,
-			//refetchQueries: [ { query: usersListQuery }],
+			refetchQueries: [ { query: usersListQuery }],
 			variables: {
 				_id: checked
-			}
+			},
 		})
-			.then(() => console.log('user deleted'))
-			.catch((e) => console.error(e))
+			.then(() => this.setState(() => ({ checked: [] })))
+			.catch(() => this.setState(() => ({ checked: [] })))
 	};
 
 	render() {
-		const { data, loading } = this.props;
+		const { data } = this.props;
 		const { checked } = this.state;
 
 		if (data.loading) {

@@ -3,15 +3,18 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { ApolloProvider } from 'react-apollo';
 
+import store from 'redux/configureStore';
+
 import App from './app';
 import client from './client';
+
 
 const throwError = ({ error }) => { throw error; };
 
 render(
 	<ApolloProvider client={client}>
 		<AppContainer errorReporter={throwError}>
-			<App />
+			<App store={store}/>
 		</AppContainer>
 	</ApolloProvider>,
 	document.getElementById('root'),
@@ -25,7 +28,7 @@ if (module.hot) {
 			render(
 				<ApolloProvider client={client}>
 					<AppContainer errorReporter={throwError}>
-						<UpdatedRoot />
+						<UpdatedRoot store={store}/>
 					</AppContainer>
 				</ApolloProvider>,
 				document.getElementById('root'),

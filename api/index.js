@@ -1,13 +1,13 @@
-require('babel-core/register');
-require('babel-polyfill');
+import 'babel-core/register';
+import 'babel-polyfill';
 
-const initMongoDB = require('./src/db');
+import initMongoDB from './src/db';
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const { graphqlExpress } = require('apollo-server-express');
-const { makeExecutableSchema } = require('graphql-tools');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
+import { makeExecutableSchema } from 'graphql-tools';
 
 const helperMiddleware = [
 	cors({ origin: 'http://195.62.70.104:8080' }),
@@ -29,6 +29,12 @@ const helperMiddleware = [
 
 		express()
 			.use('/api', ...helperMiddleware, graphqlExpress({ schema }))
+			.use(
+				'/graphiql',
+				graphiqlExpress({
+					endpointURL: '/api',
+				}),
+			)
 			.listen(process.env.PORT || 3000, () => {
 				console.log('Server running');
 			});

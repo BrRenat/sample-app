@@ -1,156 +1,75 @@
-const { ObjectId } = require('mongodb');
+import { ObjectId } from 'mongodb';
+import isEmail from 'validator/lib/isEmail';
+
+import { isUserExist } from './utils';
+
 const Users = MongoDB.collection('isina.users');
 
-const cleanObjVal = (obj) => {
-	return Object.keys(obj).reduce((prev, cur) => {
-		const val = obj[cur];
-
-		if (val) {
-			prev[cur] = val
-		}
-
-		return prev;
-	}, {});
-};
-
-const findUserData = async (query) => {
-	return await Users.find(query).toArray();
-};
-
-//query hack don't touch
-const getUserDataByID = async (query) => {
-	return await findUserData({ _id : query });
-};
-
-const checkUserEmail = async (email) => {
-	if (!/\S+@\S+/.test(email)) {
-		throw ('Email invalid');
-	}
-
-	const res = await findUserData({ email });
-
-	if (res.length > 0) {
-		throw ('Email found');
-	}
-
-	return true;
-};
-
-const checkUserName = async (name) => {
-	if (!name) {
-		throw ('Name empty');
-	}
-
-	const res = await findUserData({ name });
-
-	if (res.length > 0) {
-		throw ('Name found');
-	}
-
-	return true;
-};
-
-const validateUserData = async ({ name, email }, all = true) => {
-	if (all || (!all && name)) {
-		await checkUserName(name);
-	}
-
-	if (all || (!all && email)) {
-		await checkUserEmail(email);
-	}
-
-	return true;
-};
-
-const users = async () => {
+/*
+* Queries
+*/
+export const users = async () => {
 	return await Users.find().toArray();
 };
 
-const user = async (root, { _id }) => {
+export const user = async (root, { _id }) => {
 	return await Users.findOne(ObjectId(_id));
 };
 
-const createUser = async (root, { name, email }, context, info) => {
-	await validateUserData({ name, email });
-
-	const res = await Users.insert({ name, email });
-
-	if (!res.ops[0]) {
-		throw ('User add error');
+/*
+* Mutations
+*/
+export const createUser = async (root, { name, email }, context, info) => {
+	if (!isEmail(email)) {
+		throw 'Invalid email'
 	}
 
-	return res.ops[0];
+	if (await isUserExist(email)) {
+		throw 'User exist'
+	}
+
+	const createResult = await Users.insertOne({ name, email });
+
+	if (!createResult.insertedId) {
+		throw 'User created failed'
+	}
+
+	return await user(null, { _id: createResult.insertedId });
 };
 
-const editUser = async (root, { _id, name, email }) => {
-	const set = await cleanObjVal({ name, email });
-
-	await validateUserData(set, false);
-
-	_id = ObjectId(_id);
-
-	if (!Object.keys(set).length) {
-		throw 'Fields empty'
+export const editUser = async (root, { _id, name, email }) => {
+	if (email && !isEmail(email)) {
+		throw 'Invalid email'
 	}
 
-	let userResult = await getUserDataByID(_id);
-
-	if (!userResult.length) {
-		throw ('User not found');
+	if (!await Users.findOne(ObjectId(_id))) {
+		throw 'User not exist'
 	}
 
-	const filter = { _id };
+	const updateResult = await Users.findOneAndUpdate(
+		{ _id: ObjectId(_id) },
+		{ name, email }
+	);
 
-	const query = {
-		$set: set
-	};
-
-	const updatedUser = await Users.updateMany(filter, query);
-
-	if (!updatedUser.modifiedCount) {
-		throw ('User update error');
+	if (!updateResult.value) {
+		throw 'User update error'
 	}
 
-	userResult = await getUserDataByID(_id);
-
-	return userResult[0];
+	return await user(null, { _id });
 };
 
-const deleteUser = async (root, { _id }) => {
-	const res = await Users.deleteOne({ _id: ObjectId(_id) });
+export const deleteUsers = async (root, { _id }) => {
+	let userIds = Array.isArray(_id)
+		? _id
+		: [_id];
 
-	if (!res.deletedCount) {
-		throw ('User delete error');
+	userIds = userIds.map(id => ObjectId(id));
+
+	const deleteResult = await Users.deleteMany({ _id : { $in: userIds } });
+
+	if (!deleteResult.deletedCount) {
+		throw 'User delete error'
 	}
 
-	return !!res.deletedCount;
-};
-
-const deleteUserArray = async (root, { _id }) => {
-	_id = _id.map((val) => ObjectId(val));
-
-	const userResult = await getUserDataByID({ $in: _id });
-
-	if (!userResult.length) {
-		throw ('Users not found');
-	}
-
-	const res = await Users.deleteMany({ _id : { $in: _id } });
-
-	if (!res.deletedCount) {
-		throw ('User delete error');
-	}
-
-	return {
-		_id: userResult.map(({ _id }) => _id)
-	};
-};
-
-module.exports = {
-	createUser,
-	editUser,
-	deleteUser,
-	deleteUserArray,
-	users,
-	user,
+	return true;
 };

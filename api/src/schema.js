@@ -1,4 +1,11 @@
-const { createUser, editUser, deleteUser, deleteUserArray, users, user } = require('./resolvers/user');
+import {
+	user,
+	users,
+
+	createUser,
+	editUser,
+	deleteUsers,
+} from './resolvers/user';
 
 const typeDefs = `
 	type User { 
@@ -15,8 +22,7 @@ const typeDefs = `
 	type Mutation {
 		createUser(name: String, email: String): User
 		editUser(_id: String, name: String, email: String): User
-		deleteUser(_id: String): User
-		deleteUserArray(_id: [String]): User
+		deleteUsers(_id: [String]): User
 	}
 	
 	schema {
@@ -33,8 +39,7 @@ const resolvers = {
 	Mutation: {
 		createUser,
 		editUser,
-		deleteUser,
-		deleteUserArray
+		deleteUsers
 	}
 };
 

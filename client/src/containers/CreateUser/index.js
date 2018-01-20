@@ -1,34 +1,38 @@
 import React from 'react';
-
-import { withApollo, graphql } from 'react-apollo';
-import compose from 'lodash.compose';
-
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { Field, reduxForm } from 'redux-form'
+import { withApollo } from 'react-apollo';
+import { createStructuredSelector } from 'reselect'
 import Paper from 'material-ui/Paper';
-import Input from 'material-ui/Input';
+
+import Input from 'components/Input';
+import Form from 'components/Form';
 import Button from 'material-ui/Button';
+
+import validate from './validate'
 
 import {
 	addUserQuery,
-  usersListQuery
+  	usersListQuery
 } from 'query';
 
 class CreateUser extends React.Component {
-	state = {
-		name: '',
-		email: ''
-	};
-
-	createUser = () => {
+	createUser = (data) => {
 		const { client, history } = this.props;
-		const { name, email } = this.state;
 
 		client.mutate({
 			mutation: addUserQuery,
-			refetchQueries: [ { query: usersListQuery }],
-			variables: { name, email }
+			variables: data,
+			update: (proxy, { data: { createUser } }) => {
+				const data = proxy.readQuery({ query: usersListQuery });
+
+				data.users.push(createUser);
+
+				proxy.writeQuery({ query: usersListQuery, data });
+			}
 		})
 			.then(() => history.goBack())
-			.catch((e) => console.error(e));
 	};
 
 	editFieldStore = (e) => {
@@ -40,31 +44,33 @@ class CreateUser extends React.Component {
 	};
 
 	render() {
+		const { handleSubmit } = this.props;
+
 		return (
 			<Paper>
-				<Input
-					placeholder="User name"
-					onChange={this.editFieldStore}
-					inputProps={{
-						name: 'name'
-					}}
-				/>
-
-				<Input
-					placeholder="User email"
-					onChange={this.editFieldStore}
-					inputProps={{
-						name: 'email'
-					}}
-				/>
-
-				<Button
-					onClick={this.createUser}
-					color="primary"
-					raised
-				>
-					Create
-				</Button>
+				<Form onSubmit={handleSubmit(this.createUser)}>
+					<Field
+						type="text"
+						placeholder="Your Name"
+						label="Your Name"
+						name="name"
+						component={Input}
+					/>
+					<Field
+						type="text"
+						placeholder="Email"
+						label="Email"
+						name="email"
+						component={Input}
+					/>
+					<Button
+						color="primary"
+						type="submit"
+						raised
+					>
+						Create
+					</Button>
+				</Form>
 			</Paper>
 		);
 	}
@@ -76,7 +82,9 @@ CreateUser.propTypes = {
 
 export default compose(
 	withApollo,
-	graphql(
-		addUserQuery,
-	),
+	connect(() => ({})),
+	reduxForm({
+		form: 'CreateUserForm',
+		// validate,
+	}),
 )(CreateUser);

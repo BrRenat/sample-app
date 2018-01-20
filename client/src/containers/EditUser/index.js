@@ -20,7 +20,7 @@ class EditUser extends React.Component {
 	state = {
 		name: '',
 		email: '',
-		errors: null,
+		errors: '',
 	};
 
 	editUser = () => {
@@ -29,17 +29,24 @@ class EditUser extends React.Component {
 
 		client.mutate({
 			mutation: editUserQuery,
-			refetchQueries: [ { query: usersListQuery }],
 			variables: {
 				_id: match.params.userId,
 				name,
 				email
+			},
+			update: (proxy, { data: { editUser } }) => {
+				const data = proxy.readQuery({ query: usersListQuery });
+
+				data.users = data.users.filter(user => user._id !== editUser._id);
+				data.users.push(editUser);
+
+				proxy.writeQuery({ query: usersListQuery, data });
 			}
 		})
 			.then(() => history.goBack())
 			.catch((e) => {
 				this.setState(() => ({
-					errors: e,
+					errors: e.message.split(':')[1].trim(),
 				}))
 			})
 	};

@@ -42,7 +42,7 @@ export const editUserQuery = gql`
 
 export const removeUserArrayQuery = gql`
 	mutation DeleteUserArrayMutation($_id: [String!]) {
-		deleteUserArray(_id: $_id) {
+		deleteUsers(_id: $_id) {
 			_id
 		}
 	}

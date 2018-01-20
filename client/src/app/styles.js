@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { injectGlobal } from 'styled-components';
 
 export const AppContainer = styled.div`
   width: 100%;
@@ -10,3 +10,9 @@ export const AppContent = styled.div`
   margin: 0 auto;
   height: 100%;
 `;
+
+injectGlobal`
+	* {
+		box-sizing: border-box;
+	}
+`

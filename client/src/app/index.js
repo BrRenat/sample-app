@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route, HashRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 import asyncRoute from './asyncRoute';
 
@@ -20,18 +21,26 @@ const EditUser = asyncRoute(() => import(
 	'containers/EditUser'
 ));
 
-const App = () => (
-	<HashRouter>
-		<AppContainer>
-			<AppContent>
-				<Switch>
-					<Route exact path="/new" component={CreateUser} />
-					<Route exact path="/:userId" component={EditUser} />
-					<Route exact path="/" component={MainScreen} />
-				</Switch>
-			</AppContent>
-		</AppContainer>
-	</HashRouter>
+const AppNotifications = asyncRoute(() => import(
+	/* webpackChunkName: "AppNotifications" */
+	'containers/AppNotifications'
+));
+
+const App = ({ store }) => (
+	<Provider store={store}>
+		<HashRouter>
+			<AppContainer>
+				<AppContent>
+					<Switch>
+						<Route exact path="/new" component={CreateUser} />
+						<Route exact path="/:userId" component={EditUser} />
+						<Route exact path="/" component={MainScreen} />
+					</Switch>
+					<AppNotifications />
+				</AppContent>
+			</AppContainer>
+		</HashRouter>
+	</Provider>
 );
 
 export default App;

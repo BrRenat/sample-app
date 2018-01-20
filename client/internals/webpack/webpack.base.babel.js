@@ -161,6 +161,7 @@ module.exports = options => ({
       containers: path.resolve(process.cwd(), 'src/containers/'),
       query: path.resolve(process.cwd(), 'src/query.js'),
       utils: path.resolve(process.cwd(), 'src/utils/'),
+      'redux/': path.resolve(process.cwd(), 'src/redux/'),
     },
   },
   devtool: options.devtool,
