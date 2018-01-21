@@ -25,6 +25,7 @@ const helperMiddleware = [
 		const schema = makeExecutableSchema(require('./src/schema'));
 
 		express()
+			.use('/', express.static('/root/isina/client/build'))
 			.use('/api', ...helperMiddleware, graphqlExpress({ schema }))
 			.use(
 				'/graphiql',

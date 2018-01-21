@@ -27,4 +27,6 @@ test('adds 1 + 2 to equal 3', async () => {
 	const testRes = await user(null, { _id });
 
 	expect(testRes).toEqual(res);
+
+	await Users.deleteOne({ _id: ObjectId(_id) });
 });
