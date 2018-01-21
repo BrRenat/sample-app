@@ -3,6 +3,9 @@ import styled, { injectGlobal } from 'styled-components';
 export const AppContainer = styled.div`
   width: 100%;
   height: 100%;
+  
+  max-width: 700px;
+  margin: auto;
 `;
 
 export const AppContent = styled.div`
