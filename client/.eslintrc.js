@@ -14,6 +14,7 @@ module.exports = {
 		'eslint:recommended',
 		'plugin:react/recommended'
 	],
+	plugins: ['jest'],
 	parser: 'babel-eslint',
 	parserOptions: {
 		ecmaVersion: 8,
