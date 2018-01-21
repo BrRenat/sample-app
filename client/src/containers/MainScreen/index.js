@@ -1,55 +1,121 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withApollo, graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import compose from 'lodash.compose';
+import { Link } from 'react-router-dom';
 
-import { testAction } from 'redux/test/actions';
-import { testActionResultSelector } from 'redux/test/selectors';
+import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import { CircularProgress } from 'material-ui/Progress';
+import Checkbox from 'material-ui/Checkbox';
 
-import { MainContainer } from './styles';
+import {
+	usersListQuery,
+	removeUserArrayQuery
+} from 'query';
 
-const mapDispatchToProps = {
-	testAction
-};
-
-const mapStateToProps = createStructuredSelector({
-	testActionResult: testActionResultSelector
-});
 
 class MainScreen extends Component {
+	state = {
+		checked: []
+	};
+
+	toggleCheckedElement = (e) => {
+		const { value } = e.target;
+
+		e.persist();
+
+		this.setState(({ checked }) => ({
+			checked: checked.includes(value)
+				? checked.filter(elm => elm !== value)
+				: [...checked, value]
+		}));
+	};
+
+	removeUsers = () => {
+		const { client } = this.props;
+		const { checked } = this.state;
+
+		client.mutate({
+			mutation: removeUserArrayQuery,
+			refetchQueries: [{ query: usersListQuery }],
+			variables: {
+				_id: checked
+			}
+		})
+			.then(() => this.setState(() => ({ checked: [] })))
+			.catch(() => this.setState(() => ({ checked: [] })));
+	};
+
 	render() {
 		const { data } = this.props;
+		const { checked } = this.state;
+
+		if (data.loading) {
+			return (
+				<Paper>
+					<CircularProgress />
+				</Paper>
+			);
+		}
 
 		return (
-			<MainContainer>
-				Main page
-				{data.users &&
-					<ul>
-						{data.users.map(({ name, id }) =>
-							<li key={id}>{name}</li>
-						)}
-					</ul>
-				}
-			</MainContainer>
+			<Paper>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Name</TableCell>
+							<TableCell>Email</TableCell>
+							<TableCell />
+							<TableCell />
+						</TableRow>
+					</TableHead>
+					{data.users
+						&& <TableBody>
+							{data.users.map(({ name, _id, email }) =>
+								<TableRow
+									key={_id}
+								>
+									<TableCell>{name}</TableCell>
+									<TableCell>{email}</TableCell>
+									<TableCell><Link to={`/${_id}`}>Edit</Link></TableCell>
+									<TableCell>
+										<Checkbox
+											onClick={this.toggleCheckedElement}
+											value={_id}
+											checked={checked.includes(_id)}
+										/>
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					}
+				</Table>
+
+				<Button component={Link} to="/new">
+					Add User
+				</Button>
+
+				<Button
+					onClick={this.removeUsers}
+					disabled={checked.length === 0}
+				>
+					Remove
+				</Button>
+			</Paper>
 		);
 	}
 }
 
 MainScreen.propTypes = {
-	testAction: PropTypes.func,
-	testActionResult: PropTypes.any
+	client: PropTypes.object,
+	data: PropTypes.object
 };
 
 export default compose(
-	connect(mapStateToProps, mapDispatchToProps),
-	graphql(gql`
-		query UserList {
-			users {
-				id,
-				name
-			}
-		}
-	`),
+	withApollo,
+	graphql(
+		usersListQuery,
+	),
 )(MainScreen);

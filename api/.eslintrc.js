@@ -11,8 +11,10 @@ module.exports = {
 		dedent: true
 	},
 	extends: [
-		'eslint:recommended'
+		'eslint:recommended',
+		'plugin:react/recommended'
 	],
+	plugins: ['jest'],
 	parser: 'babel-eslint',
 	parserOptions: {
 		ecmaVersion: 8,
@@ -315,10 +317,7 @@ module.exports = {
 		'no-ternary': 'off',
 
 		// disallow trailing whitespace at the end of lines
-		'no-trailing-spaces': ['error', {
-			skipBlankLines: false,
-			ignoreComments: false
-		}],
+		'no-trailing-spaces': 'error',
 
 		// disallow the use of Boolean literals in conditional expressions
 		// also, prefer `a || b` over `a ? a : b`

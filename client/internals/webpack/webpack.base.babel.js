@@ -156,12 +156,13 @@ module.exports = options => ({
       'jsnext:main',
       'main',
     ],
-    // alias: {
-    //   components: path.resolve(process.cwd(), 'src/components/'),
-    //   containers: path.resolve(process.cwd(), 'src/containers/'),
-    //   'redux/': path.resolve(process.cwd(), 'src/redux/'),
-    //   constants: path.resolve(process.cwd(), 'src/constants.js'),
-    // },
+    alias: {
+      components: path.resolve(process.cwd(), 'src/components/'),
+      containers: path.resolve(process.cwd(), 'src/containers/'),
+      query: path.resolve(process.cwd(), 'src/query.js'),
+      utils: path.resolve(process.cwd(), 'src/utils/'),
+      'redux/': path.resolve(process.cwd(), 'src/redux/'),
+    },
   },
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window
