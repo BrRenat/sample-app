@@ -7,7 +7,7 @@ export default function asyncRoute(getComponent) {
 	return class AsyncRoute extends React.Component {
 		state = {
 			Component: null
-		}
+		};
 
 		componentWillMount() {
 			if (!this.state.Component) {

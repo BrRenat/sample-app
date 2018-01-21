@@ -1,20 +1,19 @@
 import React from 'react';
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import { Field, reduxForm } from 'redux-form'
+import PropTypes from 'prop-types';
+import compose from 'lodash.compose';
+import { Field, reduxForm } from 'redux-form';
 import { withApollo } from 'react-apollo';
-import { createStructuredSelector } from 'reselect'
-import Paper from 'material-ui/Paper';
 
+import Paper from 'material-ui/Paper';
 import Input from 'components/Input';
 import Form from 'components/Form';
 import Button from 'material-ui/Button';
 
-import validate from './validate'
+import validate from './validate';
 
 import {
 	addUserQuery,
-  	usersListQuery
+	usersListQuery
 } from 'query';
 
 class CreateUser extends React.Component {
@@ -32,15 +31,7 @@ class CreateUser extends React.Component {
 				proxy.writeQuery({ query: usersListQuery, data });
 			}
 		})
-			.then(() => history.goBack())
-	};
-
-	editFieldStore = (e) => {
-		e.persist();
-
-		this.setState(() => ({
-			[e.target.name]: e.target.value
-		}));
+			.then(() => history.goBack());
 	};
 
 	render() {
@@ -78,13 +69,15 @@ class CreateUser extends React.Component {
 
 
 CreateUser.propTypes = {
+	client: PropTypes.object,
+	history: PropTypes.object,
+	handleSubmit: PropTypes.func
 };
 
 export default compose(
 	withApollo,
-	connect(() => ({})),
 	reduxForm({
 		form: 'CreateUserForm',
-		// validate,
+		validate
 	}),
 )(CreateUser);

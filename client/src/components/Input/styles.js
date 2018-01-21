@@ -1,5 +1,5 @@
-import styled from 'styled-components'
-import theme from 'utils/theme'
+import styled from 'styled-components';
+import theme from 'utils/theme';
 
 export const InputContainer = styled.div`
   border: 1px solid #e2e2e4;
@@ -10,7 +10,7 @@ export const InputContainer = styled.div`
   position: relative;
   height: 38px;
   margin-bottom: 30px;
-`
+`;
 
 export const InputField = styled.input`
   padding: 7px 12px;
@@ -19,7 +19,7 @@ export const InputField = styled.input`
   font-size: 16px;
   width: 100%;
   outline: none;
-`
+`;
 
 export const InputPopup = styled.div`
   position: absolute;
@@ -28,7 +28,7 @@ export const InputPopup = styled.div`
   font-size: 13px;
   
   color: ${props => props.error ? theme.color.Danger : theme.color.Warning};
-`
+`;
 
 export const InputLabel = styled.div`
   font-size: 13px;
@@ -36,4 +36,4 @@ export const InputLabel = styled.div`
   color: #767676;
   top: -20px;
   left: 0;
-`
+`;

@@ -4,7 +4,7 @@ import {
 
 	createUser,
 	editUser,
-	deleteUsers,
+	deleteUsers
 } from './resolvers/user';
 
 const typeDefs = `

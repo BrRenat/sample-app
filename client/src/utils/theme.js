@@ -5,8 +5,8 @@ const theme = {
 		Success: '#5cb85c',
 		Info: '#5bc0de',
 		Warning: '#f0ad4e',
-		Danger: '#d9534f',
-	},
-}
+		Danger: '#d9534f'
+	}
+};
 
-export default theme
+export default theme;

@@ -15,4 +15,4 @@ injectGlobal`
 	* {
 		box-sizing: border-box;
 	}
-`
+`;

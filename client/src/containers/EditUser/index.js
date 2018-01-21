@@ -1,38 +1,32 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
+import { Field, reduxForm } from 'redux-form';
 import { withApollo, graphql } from 'react-apollo';
 import compose from 'lodash.compose';
 
-import Input from 'material-ui/Input';
+import Paper from 'material-ui/Paper';
+import Input from 'components/Input';
+import Form from 'components/Form';
 import Button from 'material-ui/Button';
-import CheckIcon from 'material-ui-icons/Check';
-import SaveIcon from 'material-ui-icons/Save';
+
 
 import {
 	userQuery,
 	editUserQuery,
-  usersListQuery
+	usersListQuery
 } from 'query';
 
-import { Container, SubmitWrapper, Load } from './styles';
+import validate from './validate';
 
 class EditUser extends React.Component {
-	state = {
-		name: '',
-		email: '',
-		errors: '',
-	};
-
-	editUser = () => {
+	editUser = (data) => {
 		const { client, match, history } = this.props;
-		const { name, email } = this.state;
 
 		client.mutate({
 			mutation: editUserQuery,
 			variables: {
 				_id: match.params.userId,
-				name,
-				email
+				...data
 			},
 			update: (proxy, { data: { editUser } }) => {
 				const data = proxy.readQuery({ query: usersListQuery });
@@ -43,73 +37,67 @@ class EditUser extends React.Component {
 				proxy.writeQuery({ query: usersListQuery, data });
 			}
 		})
-			.then(() => history.goBack())
-			.catch((e) => {
-				this.setState(() => ({
-					errors: e.message.split(':')[1].trim(),
-				}))
-			})
-	};
-
-	editFieldStore = (e) => {
-		e.persist();
-
-		this.setState(() => ({
-			[e.target.name]: e.target.value
-		}));
+			.then(() => history.goBack());
 	};
 
 	render() {
-		const { data } = this.props;
-		const { errors } = this.state;
-
-		if (!data || !data.user) return null;
+		const { handleSubmit } = this.props;
 
 		return (
-			<Container>
-				<Input
-					defaultValue={data.user.name}
-					placeholder="User name"
-					onChange={this.editFieldStore}
-					inputProps={{
-						name: 'name'
-					}}
-				/>
-
-				<Input
-					defaultValue={data.user.email}
-					placeholder="User email"
-					onChange={this.editFieldStore}
-					inputProps={{
-						name: 'email'
-					}}
-				/>
-
-				<SubmitWrapper>
-					<Button fab color="primary" onClick={this.editUser}>
-						<SaveIcon />
-						{/*{true ? <CheckIcon /> : <SaveIcon />}*/}
+			<Paper>
+				<Form onSubmit={handleSubmit(this.editUser)}>
+					<Field
+						type="text"
+						placeholder="Your Name"
+						label="Your Name"
+						name="name"
+						component={Input}
+					/>
+					<Field
+						type="text"
+						placeholder="Email"
+						label="Email"
+						name="email"
+						component={Input}
+					/>
+					<Button
+						color="primary"
+						type="submit"
+						raised
+					>
+						Edit
 					</Button>
-					{data.loading && <Load size={56}/>}
-				</SubmitWrapper>
-				{/*<div>{errors}</div>*/}
-			</Container>
+				</Form>
+			</Paper>
 		);
 	}
 }
 
 
 EditUser.propTypes = {
+	client: PropTypes.object,
+	history: PropTypes.object,
+	match: PropTypes.object,
+	handleSubmit: PropTypes.func
 };
 
 export default compose(
 	withApollo,
 	graphql(
 		userQuery,
-		{ options: (props) => ({
-			variables: {
-				_id: props.match.params.userId
-			}
-		})},
+		{
+			options: (props) => ({
+				variables: {
+					_id: props.match.params.userId
+				}
+			}),
+			props: ({ data: { user } }) => ({
+				initialValues: user
+			})
+		},
 	),
+	reduxForm({
+		form: 'CreateUserForm',
+		validate
+	}),
 )(EditUser);

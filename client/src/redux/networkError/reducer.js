@@ -11,6 +11,13 @@ const networkErrorReducer = createReducer({
 			[id]: error,
 		}
 	}),
+	[actions.removeNetworkError]: (state, id) => {
+		const { [id]: _, ...updatedErrors } = state.errors;
+		return ({
+			...state,
+			errors: updatedErrors,
+		})
+	},
 }, initialState);
 
 export default networkErrorReducer

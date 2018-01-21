@@ -1,13 +1,10 @@
-import 'babel-core/register';
-import 'babel-polyfill';
-
-import initMongoDB from './src/db';
-
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
+
+import initMongoDB from './src/db';
 
 const helperMiddleware = [
 	cors({ origin: 'http://195.62.70.104:8080' }),
@@ -32,7 +29,7 @@ const helperMiddleware = [
 			.use(
 				'/graphiql',
 				graphiqlExpress({
-					endpointURL: '/api',
+					endpointURL: '/api'
 				}),
 			)
 			.listen(process.env.PORT || 3000, () => {

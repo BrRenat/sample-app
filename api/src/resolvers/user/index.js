@@ -21,29 +21,35 @@ export const user = async (root, { _id }) => {
 */
 export const createUser = async (root, { name, email }, context, info) => {
 	if (!isEmail(email)) {
-		throw 'Invalid email'
+		throw 'Invalid email';
 	}
 
 	if (await isUserExist(email)) {
-		throw 'User exist'
+		throw 'User exist';
 	}
 
 	const createResult = await Users.insertOne({ name, email });
 
 	if (!createResult.insertedId) {
-		throw 'User created failed'
+		throw 'User created failed';
 	}
 
 	return await user(null, { _id: createResult.insertedId });
 };
 
 export const editUser = async (root, { _id, name, email }) => {
-	if (email && !isEmail(email)) {
-		throw 'Invalid email'
+	const targetUser = await Users.findOne(ObjectId(_id));
+
+	if (!targetUser) {
+		throw 'User not exist';
 	}
 
-	if (!await Users.findOne(ObjectId(_id))) {
-		throw 'User not exist'
+	if (email && !isEmail(email)) {
+		throw 'Invalid email';
+	}
+
+	if (targetUser.email !== email && await isUserExist(email)) {
+		throw 'User with that email exist';
 	}
 
 	const updateResult = await Users.findOneAndUpdate(
@@ -52,7 +58,7 @@ export const editUser = async (root, { _id, name, email }) => {
 	);
 
 	if (!updateResult.value) {
-		throw 'User update error'
+		throw 'User update error';
 	}
 
 	return await user(null, { _id });
@@ -65,10 +71,10 @@ export const deleteUsers = async (root, { _id }) => {
 
 	userIds = userIds.map(id => ObjectId(id));
 
-	const deleteResult = await Users.deleteMany({ _id : { $in: userIds } });
+	const deleteResult = await Users.deleteMany({ _id: { $in: userIds } });
 
 	if (!deleteResult.deletedCount) {
-		throw 'User delete error'
+		throw 'User delete error';
 	}
 
 	return true;

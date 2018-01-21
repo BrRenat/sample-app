@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withApollo, graphql } from 'react-apollo';
 import compose from 'lodash.compose';
 import { Link } from 'react-router-dom';
@@ -17,7 +18,7 @@ import {
 
 class MainScreen extends Component {
 	state = {
-		checked: [],
+		checked: []
 	};
 
 	toggleCheckedElement = (e) => {
@@ -38,13 +39,13 @@ class MainScreen extends Component {
 
 		client.mutate({
 			mutation: removeUserArrayQuery,
-			refetchQueries: [ { query: usersListQuery }],
+			refetchQueries: [{ query: usersListQuery }],
 			variables: {
 				_id: checked
-			},
+			}
 		})
 			.then(() => this.setState(() => ({ checked: [] })))
-			.catch(() => this.setState(() => ({ checked: [] })))
+			.catch(() => this.setState(() => ({ checked: [] })));
 	};
 
 	render() {
@@ -70,8 +71,8 @@ class MainScreen extends Component {
 							<TableCell />
 						</TableRow>
 					</TableHead>
-					{data.users &&
-						<TableBody>
+					{data.users
+						&& <TableBody>
 							{data.users.map(({ name, _id, email }) =>
 								<TableRow
 									key={_id}
@@ -84,8 +85,6 @@ class MainScreen extends Component {
 											onClick={this.toggleCheckedElement}
 											value={_id}
 											checked={checked.includes(_id)}
-											tabIndex={-1}
-											disableRipple
 										/>
 									</TableCell>
 								</TableRow>
@@ -110,8 +109,8 @@ class MainScreen extends Component {
 }
 
 MainScreen.propTypes = {
-	testAction: PropTypes.func,
-	testActionResult: PropTypes.any
+	client: PropTypes.object,
+	data: PropTypes.object
 };
 
 export default compose(

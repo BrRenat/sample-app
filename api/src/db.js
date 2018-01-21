@@ -7,9 +7,9 @@ const initMongoDB = async () => {
 		const db = await MongoClient.connect(MONGO_URL);
 		await db.authenticate('admin', 'Hg98t3Nsj');
 
-		return db
+		return db;
 	} catch (e) {
-		throw e
+		throw e;
 	}
 };
 
