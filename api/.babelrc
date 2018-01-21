@@ -5,5 +5,6 @@
 	"plugins": [
 		"syntax-async-functions",
 		"transform-regenerator"
-  ]
+  	],
+  	"ignore": ["node_modules", "coverage"]
 }

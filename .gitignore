@@ -3,3 +3,5 @@ client/node_modules
 api/.idea
 client/.idea
 .idea
+client/build
+api/build
