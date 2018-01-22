@@ -1,3 +1,6 @@
+require('babel-core/register');
+require('babel-polyfill');
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -6,8 +9,15 @@ import { makeExecutableSchema } from 'graphql-tools';
 
 import initMongoDB from './src/db';
 
+const config = {
+	api: {
+		url: process.env.STATE === 'local' ? 'localhost' : '195.62.70.104',
+		port: 3000
+	}
+};
+
 const helperMiddleware = [
-	cors({ origin: 'http://195.62.70.104:8080' }),
+	cors({ origin: '*' }),
 	bodyParser.json(),
 	bodyParser.text({ type: 'application/graphql' }),
 	(req, res, next) => {
@@ -33,7 +43,7 @@ const helperMiddleware = [
 					endpointURL: '/api'
 				}),
 			)
-			.listen(process.env.PORT || 3000, () => {
+			.listen(config.api.port, () => {
 				console.log('Server running');
 			});
 	} catch (e) {

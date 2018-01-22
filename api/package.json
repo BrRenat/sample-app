@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-	"start": "nodemon ./build/index.js --exec babel-node --presets es2015,stage-2",
+	"start": "MONGO_USER=admin MONGO_PASS=Hg98t3Nsj nodemon index.js --exec babel-node --presets es2015,stage-2",
+	"start:local": "MONGO_USER=admin MONGO_PASS=Hg98t3Nsj STATE=local nodemon index.js --exec babel-node --presets es2015,stage-2",
+	"start:prod": "MONGO_USER=admin MONGO_PASS=Hg98t3Nsj forever stopall && forever start build/index.js",
 	"build": "rm -rf build && babel -d ./build/src ./src && babel -d ./build index.js && cp -a ./node_modules/. ./build/node_modules",
-	"start:server": "forever start ./build/index.js",
-    "test": "cross-env NODE_ENV=test jest --coverage"
+    "test": "MONGO_USER=admin MONGO_PASS=Hg98t3Nsj cross-env NODE_ENV=test jest --coverage"
   },
   "author": "Renat Berezovsky <renat0014@gmail.com>",
   "babel": {

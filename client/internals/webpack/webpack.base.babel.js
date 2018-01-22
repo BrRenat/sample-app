@@ -137,6 +137,7 @@ module.exports = options => ({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         ANALYZE: JSON.stringify(process.env.ANALYZE),
+        STATE: JSON.stringify(process.env.STATE),
       },
     }),
 

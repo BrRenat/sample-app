@@ -7,8 +7,9 @@
     "type": ""
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config internals/webpack/webpack.prod.babel.js --color -p --progress",
+    "build": "rm -rf build && cross-env NODE_ENV=production webpack --config internals/webpack/webpack.prod.babel.js --color -p --progress",
     "start": "cross-env NODE_ENV=development PORT=8080 node internals/server",
+    "start:local": "cross-env NODE_ENV=development STATE=local PORT=8080 node internals/server",
     "analyze": "cross-env NODE_ENV=production ANALYZE=true webpack --config internals/webpack/webpack.dev.babel.js",
     "test": "cross-env NODE_ENV=test jest --coverage",
     "lint:eslint": "eslint -- . ",
@@ -74,7 +75,6 @@
     "cross-env": "^4.0.0",
     "css-loader": "^0.26.1",
     "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^3.15.0",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-plugin-babel": "^4.1.2",
